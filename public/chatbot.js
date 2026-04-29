@@ -1220,8 +1220,7 @@
 // })();
 
 (function () {
-  const API_URL = "http://localhost:3000/api/chat";
-
+  const API_URL = "https://plugai.vercel.app/api/chat";
   const scriptTag = document.currentScript;
   const botId = scriptTag.getAttribute("data-bot-id");
   const botName = scriptTag.getAttribute("data-bot-name") || "Support";
