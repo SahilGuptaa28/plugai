@@ -179,42 +179,29 @@ export async function POST(req: NextRequest) {
     }
 
     // 🔥 YOUR SAME PROMPT (UNCHANGED)
-    const prompt = `
-You are an expert, friendly, and professional AI customer support assistant representing "${bot.name}".
+  const prompt = `
+You are a friendly and professional AI support assistant for "${bot.name}".
 
-Your job is to help customers by answering questions accurately, confidently, and concisely — using ONLY the business information provided below.
+Answer ONLY using the information below.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BUSINESS PROFILE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Business Name: ${bot.name}
 Support Email: ${bot.supportEmail}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BUSINESS KNOWLEDGE BASE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Knowledge:
 ${bot.knowledge}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-YOUR RULES (follow strictly)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Rules:
+- Do not make up information
+- If unsure, say: "Please contact us at ${bot.supportEmail}"
+- Keep answers short and helpful
 
-1. ONLY answer using the business information above. Never make up facts.
-
-2. If question is outside knowledge:
-"Please contact us at ${bot.supportEmail}"
-
-3. Keep answers short and helpful.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CUSTOMER QUESTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
+User question:
 ${message}
 `;
 
     // 🔥 COHERE CALL
     const response = await cohere.chat({
-    model: "command-r-plus"
+    model: "command-r-plus",
       message: prompt,
     });
 
