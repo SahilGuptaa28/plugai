@@ -20,7 +20,7 @@ export default function EmbedSection({
 
   const isConfigured = supportEmail?.trim() && knowledge?.trim();
 
-  const code = `<script src="http://localhost:3000/chatbot.js" data-bot-id="${botId}" data-bot-name="${botName}"></script>`;
+  const code = `<script src="https://plugai.vercel.app/chatbot.js" data-bot-id="${botId}" data-bot-name="${botName}"></script>`;
 
   const handleCopy = () => {
     if (!isConfigured) return;
