@@ -231,7 +231,7 @@ export default function HomePage() {
                         transition={{ duration: 3, repeat: Infinity, delay: 0.3 }}
                         className="absolute z-30 -bottom-8 right-4 md:right-10 bg-blue-500/20 backdrop-blur px-4 py-2 rounded-xl text-sm border border-white/10 max-w-[220px]"
                     >
-                        Wlecome to PlugAI
+                        Welcome to PlugAI
                     </motion.div>
 
                     {/* Chat Card */}
