@@ -1,13 +1,19 @@
 import { DefaultSession } from "next-auth"
 
-declare module "next-auth"{
-    interface Session{
-        user:{
-            id:string,
-               plan?: "free" | "pro" | "business"
+declare module "next-auth" {
+  interface User {
+    id: string
+    credits?: number
+    plan?: "free" | "pro" | "business"
+  }
+
+  interface Session {
+    user: {
+      id: string
       credits?: number
-        } & DefaultSession['user']
-    }
+      plan?: "free" | "pro" | "business"
+    } & DefaultSession["user"]
+  }
 }
 
 export {}

@@ -3,16 +3,20 @@ import connectDb from "@/lib/db";
 import Chatbot from "@/models/chatbotModel";
 import mongoose from "mongoose";
 
+/**
+ * ✏️ UPDATE BOT
+ */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { botId: string } }
+  context: { params: Promise<{ botId: string }> }
 ) {
   try {
     await connectDb();
 
-    const { botId } = await params;
+    // ✅ Get botId (NEW Next.js way)
+    const { botId } = await context.params;
 
-    // ✅ Validate ID
+    // ✅ Validate Mongo ID
     if (!mongoose.Types.ObjectId.isValid(botId)) {
       return NextResponse.json(
         { error: "Invalid Bot ID" },
@@ -20,8 +24,9 @@ export async function PUT(
       );
     }
 
-    // 📦 Get request body
-    const { name, supportEmail, knowledge } = await req.json();
+    // 📦 Parse request body
+    const body = await req.json();
+    const { name, supportEmail, knowledge } = body;
 
     // ❗ Validation
     if (!name || !knowledge) {
@@ -39,9 +44,10 @@ export async function PUT(
         supportEmail,
         knowledge,
       },
-      { new: true } // return updated data
+      { new: true }
     );
 
+    // ❌ Bot not found
     if (!updatedBot) {
       return NextResponse.json(
         { error: "Bot not found" },
@@ -56,7 +62,7 @@ export async function PUT(
     });
 
   } catch (error) {
-  
+    console.error("PUT BOT ERROR:", error);
 
     return NextResponse.json(
       { error: "Internal server error" },
@@ -65,16 +71,20 @@ export async function PUT(
   }
 }
 
+/**
+ * 🗑️ DELETE BOT
+ */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { botId: string } }
+  context: { params: Promise<{ botId: string }> }
 ) {
   try {
     await connectDb();
 
-    const { botId } = await params;
+    // ✅ Get botId (NEW Next.js way)
+    const { botId } = await context.params;
 
-    // ✅ Validate ID
+    // ✅ Validate Mongo ID
     if (!mongoose.Types.ObjectId.isValid(botId)) {
       return NextResponse.json(
         { error: "Invalid Bot ID" },
@@ -85,6 +95,7 @@ export async function DELETE(
     // 🗑️ Delete bot
     const deletedBot = await Chatbot.findByIdAndDelete(botId);
 
+    // ❌ Not found
     if (!deletedBot) {
       return NextResponse.json(
         { error: "Bot not found" },
