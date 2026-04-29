@@ -152,6 +152,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
+// ✅ Initialize Cohere
 const cohere = new CohereClient({
   token: process.env.COHERE_API_KEY!,
 });
@@ -162,6 +163,7 @@ export async function POST(req: NextRequest) {
 
     const { message, botId } = await req.json();
 
+    // ❗ Validation
     if (!message || !botId) {
       return new NextResponse(
         JSON.stringify({ error: "message and botId are required" }),
@@ -169,6 +171,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 🔍 Fetch bot
     const bot = await Chatbot.findById(botId);
 
     if (!bot) {
@@ -178,8 +181,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 🔥 YOUR SAME PROMPT (UNCHANGED)
-  const prompt = `
+    // ⚠️ Limit knowledge size (VERY IMPORTANT)
+    const trimmedKnowledge = bot.knowledge?.slice(0, 2000) || "";
+
+    // 🧠 Prompt
+    const prompt = `
 You are a friendly and professional AI support assistant for "${bot.name}".
 
 Answer ONLY using the information below.
@@ -188,7 +194,7 @@ Business Name: ${bot.name}
 Support Email: ${bot.supportEmail}
 
 Knowledge:
-${bot.knowledge}
+${trimmedKnowledge}
 
 Rules:
 - Do not make up information
@@ -199,18 +205,24 @@ User question:
 ${message}
 `;
 
-    // 🔥 COHERE CALL
-    const response = await cohere.chat({
-    model: "command",
-      message: prompt,
+    // 🔥 Cohere v2 API call
+    const response = await cohere.v2.chat({
+      model: "command-a-03-2025",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
     });
 
-    const reply = response.text;
+    // ✅ Extract reply safely
+    const reply =
+      (response as any)?.message?.content?.[0]?.text ||
+      `Please contact support at ${bot.supportEmail}`;
 
     return new NextResponse(
-      JSON.stringify({
-        reply: reply || `Please contact support at ${bot.supportEmail}`,
-      }),
+      JSON.stringify({ reply }),
       {
         status: 200,
         headers: {
@@ -220,8 +232,18 @@ ${message}
       }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("CHAT API ERROR:", error);
+
+    // 🔥 Handle rate limit
+    if (error?.statusCode === 429) {
+      return new NextResponse(
+        JSON.stringify({
+          reply: "⚠️ Too many requests. Please wait a moment 🙏",
+        }),
+        { status: 200, headers: corsHeaders }
+      );
+    }
 
     return new NextResponse(
       JSON.stringify({
@@ -232,7 +254,7 @@ ${message}
   }
 }
 
-// 🔁 OPTIONS (CORS)
+// 🔁 CORS preflight
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
