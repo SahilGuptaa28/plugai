@@ -214,7 +214,7 @@ ${message}
 
     // 🔥 COHERE CALL
     const response = await cohere.chat({
-      model: "command-r",
+    model: "command-r-plus"
       message: prompt,
     });
 
