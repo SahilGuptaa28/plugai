@@ -85,7 +85,7 @@ export default async function EmbedPage({
       <div className="grid sm:grid-cols-3 gap-4">
         {[
           { step: "01", title: "Copy the script", desc: "Use the embed code generated below." },
-          { step: "02", title: "Paste in HTML", desc: "Add it before the closing </body> tag." },
+          { step: "02", title: "Paste in your index.html file", desc: "Add it before the closing </body> tag." },
           { step: "03", title: "Go live", desc: "Refresh your site — your bot is ready." },
         ].map((item) => (
           <div key={item.step} className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-1.5">

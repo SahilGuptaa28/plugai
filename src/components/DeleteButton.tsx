@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast"
 
 export default function DeleteBotButton({ botId }: { botId: string }) {
   const [showModal, setShowModal] = useState(false);
@@ -10,29 +11,42 @@ export default function DeleteBotButton({ botId }: { botId: string }) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    try {
-      setLoading(true);
+  const toastId = toast.loading("Deleting bot...")
 
-      const res = await fetch(`/api/bots/${botId}`, {
-        method: "DELETE",
-      });
+  try {
+    setLoading(true)
 
-      if (!res.ok) {
-        alert("Failed to delete ❌");
-        return;
-      }
+    const res = await fetch(`/api/bots/${botId}`, {
+      method: "DELETE",
+    })
 
-      // ✅ Redirect after delete
-      router.push("/dashboard");
-
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong ❌");
-    } finally {
-      setLoading(false);
-      setShowModal(false);
+    if (!res.ok) {
+      toast.error("Unable to delete bot. Please try again.", {
+        id: toastId,
+      })
+      return
     }
-  };
+
+    // ✅ Success toast (clean + premium)
+    toast.success("Bot deleted", {
+      id: toastId,
+      icon: "🗑️",
+    })
+
+    // ✅ Redirect
+    router.push("/dashboard")
+
+  } catch (err) {
+    console.error(err)
+
+    toast.error("Something went wrong", {
+      id: toastId,
+    })
+  } finally {
+    setLoading(false)
+    setShowModal(false)
+  }
+}
 
   return (
     <>

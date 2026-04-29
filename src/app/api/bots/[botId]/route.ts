@@ -56,7 +56,7 @@ export async function PUT(
     });
 
   } catch (error) {
-    console.error("PUT BOT ERROR:", error);
+  
 
     return NextResponse.json(
       { error: "Internal server error" },

@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-
+import Img from "next/image"
 export default function AboutPage() {
   return (
     <div className="text-white max-w-4xl mx-auto space-y-16 py-8 px-6">
@@ -96,9 +96,10 @@ export default function AboutPage() {
 
       {/* BUILDER */}
       <div className="flex items-center gap-5 bg-white/5 border border-white/10 rounded-2xl p-6">
-        <div className="w-14 h-14 rounded-full bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl font-bold text-blue-400 shrink-0">
-          S
-        </div>
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-blue-400/20 flex items-center justify-center text-xl font-bold text-blue-400">
+              <Img src="/profile.jpeg" alt="Sahil Gupta"  width={48}
+              height={48} className="w-full h-full object-cover rounded-xl" />
+            </div>
 
         <div>
           <div className="text-white/50 text-sm mb-1">Built by</div>
@@ -128,10 +129,6 @@ export default function AboutPage() {
 
       </div>
 
-      {/* FOOTER */}
-      <div className="pt-10 border-t border-white/10 text-sm text-white/40 text-center">
-        PlugAI — AI chatbot for your website
-      </div>
 
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+  import toast from "react-hot-toast"
 
 export default function DashboardPage() {
   const [bots, setBots] = useState<any[]>([]);
@@ -24,30 +25,46 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  async function handleCreateBot(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      setLoadingCreate(true);
-      const res = await fetch("/api/bots", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.error || "Failed to create bot");
-        return;
+
+async function handleCreateBot(e: React.FormEvent) {
+  e.preventDefault()
+
+  try {
+    setLoadingCreate(true)
+
+    const res = await fetch("/api/bots", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    })
+
+    const data = await res.json()
+
+    // ❌ Error handling
+    if (!res.ok) {
+      if (res.status === 403) {
+        toast.error("You've reached your bot limit. Upgrade your plan 🚀")
+      } else {
+        toast.error(data.error || "Failed to create bot ❌")
       }
-      setName("");
-      setShowModal(false);
-      router.push(`/dashboard/${data._id}`);
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong ❌");
-    } finally {
-      setLoadingCreate(false);
+      return
     }
+
+    // ✅ Success
+    toast.success("Bot created successfully 🎉")
+
+    setName("")
+    setShowModal(false)
+
+    router.push(`/dashboard/${data._id}`)
+
+  } catch (err) {
+    console.error(err)
+    toast.error("Something went wrong ❌")
+  } finally {
+    setLoadingCreate(false)
   }
+}
 
   return (
     <div className="text-white max-w-6xl mx-auto py-8 space-y-8">

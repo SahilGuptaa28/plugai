@@ -1,16 +1,65 @@
 "use client"
-
+import { useEffect } from "react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { Check, X } from "lucide-react"
+import toast from "react-hot-toast"
 
 export default function PricingPage() {
   const { data: session } = useSession()
+  useEffect(() => {
+  const script = document.createElement("script")
+  script.src = "https://checkout.razorpay.com/v1/checkout.js"
+  script.async = true
+  document.body.appendChild(script)
+}, [])
+const handlePayment = async (amount: number, plan: string) => {
+  const res = await fetch("/api/create-order", {
+    method: "POST",
+    body: JSON.stringify({
+      amount,
+      userId: session?.user?.id,
+      plan,
+    }),
+  })
+
+  const order = await res.json()
+
+  const options = {
+    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+    amount: order.amount,
+    currency: "INR",
+    name: "PlugAI",
+    description: `${plan} Plan`,
+    order_id: order.id,
+     method: {
+    card: true,
+    upi: true,
+    netbanking: true,
+    wallet: true,
+    paylater: true,
+  },
+
+    handler: function () {
+      toast.success("Payment successful", {
+  icon: "💳",
+})
+      window.location.href = "/dashboard/profile"
+    },
+
+    prefill: {
+      email: session?.user?.email,
+    },
+  }
+
+  const rzp = new (window as any).Razorpay(options)
+  rzp.open()
+}
 
   const plans = [
     {
       name: "Free",
-      price: "$0",
+      price: "₹0",
       period: "forever",
       desc: "Perfect for trying out PlugAI.",
       badge: null,
@@ -31,7 +80,7 @@ export default function PricingPage() {
     },
     {
       name: "Pro",
-      price: "$9",
+      price: "₹999",
       period: "month",
       desc: "For growing businesses and teams.",
       badge: "Most Popular",
@@ -52,7 +101,7 @@ export default function PricingPage() {
     },
     {
       name: "Business",
-      price: "$29",
+      price: "₹2999",
       period: "month",
       desc: "For teams that need full power and scale.",
       badge: "Best Value",
@@ -72,7 +121,7 @@ export default function PricingPage() {
       ],
     },
   ]
-
+  console.log("KEY:", process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID)
   return (
     <div className="text-white max-w-6xl mx-auto py-8 space-y-12">
 
@@ -93,13 +142,13 @@ export default function PricingPage() {
         {plans.map((plan) => (
           <div
             key={plan.name}
-            className={`relative rounded-2xl border p-6 flex flex-col gap-6 ${
-              plan.name === "Pro"
-                ? "border-blue-400/40 bg-gradient-to-br from-blue-500/10 to-purple-500/10"
-                : plan.name === "Business"
-                ? "border-purple-400/30 bg-gradient-to-br from-purple-500/10 to-pink-500/5"
-                : "border-white/10 bg-white/5"
-            }`}
+            className={`relative rounded-2xl border p-6 flex flex-col gap-6 transition-all duration-300 hover:scale-[1.02] ${
+  plan.name === "Pro"
+    ? "border-blue-400/40 bg-gradient-to-br from-blue-500/10 to-purple-500/10 hover:border-blue-400"
+    : plan.name === "Business"
+    ? "border-purple-400/30 bg-gradient-to-br from-purple-500/10 to-pink-500/5 hover:border-purple-400"
+    : "border-white/10 bg-white/5 hover:border-white/20"
+}`}
           >
             {/* Badge */}
             {plan.badge && (
@@ -121,17 +170,37 @@ export default function PricingPage() {
             </div>
 
             {/* CTA */}
-            <Link href={plan.ctaHref}>
-              <button className={`w-full py-3 rounded-full font-medium text-sm transition ${
-                plan.name === "Pro"
-                  ? "bg-white text-black hover:bg-zinc-200"
-                  : plan.name === "Business"
-                  ? "bg-purple-500/20 border border-purple-400/30 text-purple-300 hover:bg-purple-500/30"
-                  : "border border-white/20 hover:bg-white/10"
-              } ${plan.current ? "opacity-50 cursor-default pointer-events-none" : ""}`}>
-                {plan.cta}
-              </button>
-            </Link>
+            {plan.name === "Free" ? (
+  <Link href={plan.ctaHref}>
+    <button className={`w-full py-3 rounded-full font-medium text-sm transition ${
+      "border border-white/20 hover:bg-white/10"
+    } ${plan.current ? "opacity-50 cursor-default pointer-events-none" : ""}`}>
+      {plan.cta}
+    </button>
+  </Link>
+) : !session ? (
+  <Link href="/register">
+    <button className="w-full py-3 rounded-full font-medium text-sm border border-white/20 hover:bg-white/10">
+      {plan.cta}
+    </button>
+  </Link>
+) : (
+  <button
+    onClick={() =>
+      handlePayment(
+        plan.name === "Pro" ? 999 : 2999,
+        plan.name
+      )
+    }
+    className={`w-full py-3 rounded-full font-medium text-sm transition ${
+      plan.name === "Pro"
+        ? "bg-white text-black hover:bg-zinc-200"
+        : "bg-purple-500/20 border border-purple-400/30 text-purple-300 hover:bg-purple-500/30"
+    }`}
+  >
+    {plan.cta}
+  </button>
+)}
 
             {/* Features */}
             <div className="space-y-2.5">
@@ -223,13 +292,6 @@ export default function PricingPage() {
           ))}
         </div>
       </div>
-
-      {/* FOOTER NOTE */}
-      <div className="pt-4 border-t border-white/10 text-xs text-white/30 flex items-center justify-between">
-        <span>Plug<span className="text-blue-400">AI</span> — AI chatbot for your website</span>
-        <span>© {new Date().getFullYear()}</span>
-      </div>
-
     </div>
   )
 }

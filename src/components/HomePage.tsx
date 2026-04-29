@@ -3,6 +3,8 @@ import { motion } from 'framer-motion'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSession, signOut } from "next-auth/react"
+import Script from 'next/script'
+import PlugAIBot from './plugAI'
 
 export default function HomePage() {
     const { data: session, status } = useSession()
@@ -229,7 +231,7 @@ export default function HomePage() {
                         transition={{ duration: 3, repeat: Infinity, delay: 0.3 }}
                         className="absolute z-30 -bottom-8 right-4 md:right-10 bg-blue-500/20 backdrop-blur px-4 py-2 rounded-xl text-sm border border-white/10 max-w-[220px]"
                     >
-                        What are your plans?
+                        Wlecome to PlugAI
                     </motion.div>
 
                     {/* Chat Card */}
@@ -296,7 +298,6 @@ export default function HomePage() {
                     ))}
                 </div>
             </motion.div>
-
         </div>
     )
 }

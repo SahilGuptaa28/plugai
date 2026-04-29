@@ -10,6 +10,10 @@ export interface IUser {
   createdAt?: Date;
   updatedAt?: Date;
 
+  // payments
+  plan?: "free" | "pro" | "business";
+  credits?: number;
+
   // methods
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -34,7 +38,7 @@ const userSchema = new Schema<IUser>(
 
     password: {
       type: String,
-      required: true,
+      required: false,
       minlength: 6,
       select: false, // 🔥 important (hide password by default)
     },
@@ -42,6 +46,16 @@ const userSchema = new Schema<IUser>(
     image: {
       type: String,
       default: "",
+    },
+    plan: {
+      type: String,
+      enum: ["free", "pro", "business"],
+      default: "free",
+    },
+
+    credits: {
+      type: Number,
+      default: 100,
     },
   },
   {

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import { Toaster } from "react-hot-toast";
+import PlugAIBot from "@/components/plugAI";
 
 
 const geistSans = Geist({
@@ -36,6 +38,40 @@ export default function RootLayout({
          <Providers>
 
             <main>{children}</main>
+            <PlugAIBot />
+             <Toaster
+  position="top-center"
+  reverseOrder={false}
+  gutter={10}
+  containerStyle={{ top: 20 }}
+  toastOptions={{
+    duration: 4000,
+    style: {
+      background: "rgba(15,15,15,0.9)",
+      color: "#fff",
+      border: "1px solid rgba(255,255,255,0.08)",
+      borderRadius: "14px",
+      padding: "14px 16px",
+      fontSize: "14px",
+      backdropFilter: "blur(12px)",
+      boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+    },
+
+    success: {
+      iconTheme: {
+        primary: "#22c55e",
+        secondary: "#0f0f0f",
+      },
+    },
+
+    error: {
+      iconTheme: {
+        primary: "#ef4444",
+        secondary: "#0f0f0f",
+      },
+    },
+  }}
+/>
           
         </Providers>
 

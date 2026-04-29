@@ -1,9 +1,7 @@
-
 "use client"
-
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSession, signOut } from "next-auth/react"
 import {
   LayoutDashboard,
@@ -13,7 +11,8 @@ import {
   ChevronLeft,
   User,
   CreditCard,
-  LogOut
+  LogOut,
+  Contact
 } from "lucide-react"
 
 export default function DashboardLayout({
@@ -24,8 +23,18 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
-
   const { data: session } = useSession()
+  const [userData, setUserData] = useState<any>(null)
+
+  const user = userData || session?.user
+  const plan = userData?.plan || "Free"
+
+  useEffect(() => {
+    if (!session?.user?.email) return
+    fetch("/api/user")
+      .then(res => res.json())
+      .then(data => setUserData(data))
+  }, [session])
 
   const navItems = [
     { href: "/dashboard", icon: LayoutDashboard, label: "Chatbots", exact: true },
@@ -33,19 +42,23 @@ export default function DashboardLayout({
 
   const resourceItems = [
     { href: "/dashboard/docs", icon: FileText, label: "Docs" },
-    { href: "/embed", icon: Code, label: "Embed" },
     { href: "/dashboard/about", icon: Info, label: "About" },
   ]
-
+  const contactItems = [
+    { href: "/dashboard/contact&collab", icon: Contact, label: "Get in Touch" },
+  ]
   const accountItems = [
     { href: "/dashboard/profile", icon: User, label: "Profile" },
     { href: "/dashboard/pricing", icon: CreditCard, label: "Pricing" },
   ]
 
+
   const isActive = (href: string, exact = false) =>
     exact ? pathname === href : pathname.startsWith(href)
 
-  const NavLink = ({ href, icon: Icon, label, exact = false }: { href: string; icon: any; label: string; exact?: boolean }) => (
+  const NavLink = ({ href, icon: Icon, label, exact = false }: {
+    href: string; icon: any; label: string; exact?: boolean
+  }) => (
     <Link href={href}>
       <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all ${isActive(href, exact)
           ? "bg-blue-500/20 text-white border border-blue-400/20"
@@ -100,24 +113,36 @@ export default function DashboardLayout({
         <div className="flex-1 overflow-y-auto">
 
           {/* LOGO + COLLAPSE */}
-          <div className="flex items-center justify-between mb-8">
+          <div className={`flex items-center mb-8 ${collapsed ? "justify-center" : "justify-between"}`}>
             <Link href="/" className="flex items-center gap-2">
               <img src="/icon.svg" alt="PlugAI" width={28} height={28} className="shrink-0" />
-
-              {/* 👇 Hide text only when collapsed (not logo) */}
               {!collapsed && (
                 <h1 className="text-xl font-semibold">
                   Plug<span className="text-blue-400">AI</span>
                 </h1>
               )}
             </Link>
-            <button
-              onClick={() => setCollapsed(!collapsed)}
-              className={`p-2 rounded-xl hover:bg-white/10 transition ${collapsed ? "mx-auto" : ""}`}
-            >
-              <ChevronLeft size={18} className={`transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`} />
-            </button>
+            {!collapsed && (
+              <button
+                onClick={() => setCollapsed(!collapsed)}
+                className="p-2 rounded-xl hover:bg-white/10 transition"
+              >
+                <ChevronLeft size={18} className="transition-transform duration-300" />
+              </button>
+            )}
           </div>
+
+          {/* Collapsed toggle */}
+          {collapsed && (
+            <div className="flex justify-center mb-6">
+              <button
+                onClick={() => setCollapsed(false)}
+                className="p-2 rounded-xl hover:bg-white/10 transition"
+              >
+                <ChevronLeft size={18} className="rotate-180 transition-transform duration-300" />
+              </button>
+            </div>
+          )}
 
           {/* NAV */}
           <nav className="space-y-1">
@@ -126,7 +151,6 @@ export default function DashboardLayout({
               <NavLink key={item.href} {...item} />
             ))}
 
-            {/* RESOURCES */}
             {!collapsed && (
               <p className="text-xs text-zinc-500 mt-6 mb-2 px-2 uppercase tracking-wider">Resources</p>
             )}
@@ -135,8 +159,18 @@ export default function DashboardLayout({
             {resourceItems.map((item) => (
               <NavLink key={item.href} {...item} />
             ))}
+            {!collapsed && (
+              <p className="text-xs text-zinc-500 mt-6 mb-2 px-2 uppercase tracking-wider">
+                Contact
+              </p>
+            )}
 
-            {/* ACCOUNT */}
+            {collapsed && <div className="mt-4 mb-1 border-t border-white/10" />}
+
+            {contactItems.map((item) => (
+              <NavLink key={item.href} {...item} />
+            ))}
+
             {!collapsed && (
               <p className="text-xs text-zinc-500 mt-6 mb-2 px-2 uppercase tracking-wider">Account</p>
             )}
@@ -160,8 +194,11 @@ export default function DashboardLayout({
               />
               {!collapsed && (
                 <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{session?.user?.name || "User"}</p>
-                  <p className="text-xs text-zinc-500">Free Plan</p>
+                  <p className="text-sm font-medium truncate">{user?.name || "User"}</p>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                    <p className="text-xs text-zinc-500 capitalize">{plan} Plan</p>
+                  </div>
                 </div>
               )}
             </div>

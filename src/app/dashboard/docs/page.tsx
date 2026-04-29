@@ -138,11 +138,6 @@ export default function DocsPage() {
         </a>
       </div>
 
-      {/* FOOTER */}
-      <div className="pt-6 border-t border-white/10 text-sm text-white/40 flex items-center justify-between">
-        <span>Plug<span className="text-blue-400">AI</span> — AI chatbot for your website</span>
-        <span>© {new Date().getFullYear()}</span>
-      </div>
 
     </div>
   );

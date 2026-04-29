@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast"
 
 export default function EditBotForm({ bot }: any) {
   const [name, setName] = useState(bot.name);
@@ -28,16 +29,16 @@ export default function EditBotForm({ bot }: any) {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error);
+        toast.error(data.error);
         return;
       }
         router.refresh();
 
-      alert("Updated successfully ✅");
+      toast.success("Bot updated")
 
     } catch (err) {
       console.error(err);
-      alert("Something went wrong ❌");
+      toast.error("Something went wrong ❌");
     } finally {
       setLoading(false);
     }
