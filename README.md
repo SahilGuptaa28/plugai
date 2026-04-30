@@ -6,12 +6,9 @@
 
 PlugAI is a full-stack SaaS platform that enables businesses to create and deploy custom AI-powered customer support chatbots with ease.
 Users can train chatbots using their own business knowledge and embed them on any website using a simple JavaScript widget.
+## 🌐 Live Demo
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-plugai.com-blue?style=for-the-badge&logo=vercel)](https://plugai.com)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://typescriptlang.org)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-green?style=for-the-badge&logo=mongodb)](https://mongodb.com)
-[![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-plugai.vercel.app-blue?style=for-the-badge&logo=vercel)](https://plugai.vercel.app)
 
 </div>
 
@@ -196,7 +193,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 *Founder & Developer — Building simple and powerful AI tools for real-world use cases.*
 
-[![Email](https://img.shields.io/badge/Email-sahilgupta@gmail.com-blue?style=flat-square&logo=gmail)](mailto:sahilgupta@gmail.com)
+[![Email](https://img.shields.io/badge/Email-sahilgupta@gmail.com-blue?style=flat-square&logo=gmail)](mailto:sahilgupta77236@gmail.com)
 
 </div>
 
@@ -213,6 +210,6 @@ All rights reserved © 2026 PlugAI.
 
 **PlugAI** — AI chatbot for your website 🚀
 
-[plugai.com](https://plugai.com) · [Docs](https://plugai.com/dashboard/docs) · [Pricing](https://plugai.com/dashboard/pricing)
+[plugai.com]((https://plugai.vercel.app/)) · [Docs](https://plugai.com/dashboard/docs) · [Pricing](https://plugai.com/dashboard/pricing)
 
 </div>
