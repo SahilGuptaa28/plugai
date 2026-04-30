@@ -89,7 +89,7 @@ Users can train chatbots using their own business knowledge and embed them on an
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/your-username/plugai.git
+git clone https://github.com/SahilGuptaa28/plugai.git
 cd plugai
 npm install
 npm run dev
